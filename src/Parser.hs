@@ -70,7 +70,7 @@ idChar = satisfy $ \c -> isAlphaNum c || c == '_'
 
 parseName :: Parser Name
 parseName = label "identifier" $
-  fmap (Name . pack) $ lex $ (:) <$> startChar <*> many idChar
+  fmap (LocalName . pack) $ lex $ (:) <$> startChar <*> many idChar
 
 parseVar :: Parser (Expr ())
 parseVar = fmap VarE parseName

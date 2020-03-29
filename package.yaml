@@ -42,6 +42,7 @@ default-extensions:
   - GeneralizedNewtypeDeriving
   - DeriveAnyClass
   - StandaloneDeriving
+  - TypeApplications
 
 dependencies:
 - base-noprelude >= 4.7 && < 5
