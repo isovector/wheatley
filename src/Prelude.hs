@@ -1,6 +1,7 @@
 module Prelude
   ( module BasePrelude
   , Text
+  , Map
   , pack
   ) where
 
@@ -30,6 +31,9 @@ import BasePrelude hiding
   , fail
   , arr
   , try
+  , typeOf
   )
+
 import Data.Text
+import Data.Map (Map)
 

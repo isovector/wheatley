@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 04205d4b9f1d5e587b3abe33ca6d058975eb6f44815d124c13c12ce1edfbb9d3
+-- hash: 34c01476afe8c96af92aec921eff911254f19a0a592b6191a387492488c4f70b
 
 name:           wheatley
 version:        0.1.0.0
@@ -31,6 +31,7 @@ library
       Parser
       ParserUtils
       Prelude
+      Typecheck
   other-modules:
       Paths_wheatley
   hs-source-dirs:
@@ -39,6 +40,10 @@ library
   build-depends:
       base-noprelude >=4.7 && <5
     , base-prelude
+    , containers
     , megaparsec
+    , mtl
+    , syb
     , text
+    , transformers
   default-language: Haskell2010

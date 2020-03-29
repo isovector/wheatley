@@ -48,6 +48,10 @@ dependencies:
 - base-prelude
 - megaparsec
 - text
+- containers
+- syb
+- mtl
+- transformers
 
 library:
   source-dirs: src

@@ -48,7 +48,7 @@ mkSrcSpan (SourcePos fp line1 col1)
 parseLam :: Parser (Expr ())
 parseLam = do
   symbol "\\"
-  bndrs <- sepBy (liftELoc parseBndr) sc
+  bndrs <- sepBy parseName sc
   arr
   body <- parseExpr
   pure $ LamE bndrs body
@@ -72,10 +72,7 @@ parseName :: Parser Name
 parseName = label "identifier" $
   fmap (Name . pack) $ lex $ (:) <$> startChar <*> many idChar
 
-parseBndr :: Parser (Bndr ())
-parseBndr = fmap Bndr parseName
-
 parseVar :: Parser (Expr ())
-parseVar = fmap VarE $ liftELoc parseBndr
+parseVar = fmap VarE parseName
 
 

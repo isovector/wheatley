@@ -15,6 +15,11 @@ data ELoc e a = EL
   }
   deriving stock (Functor, Foldable, Traversable)
 
+data TcMeta = TcMeta
+  { tcmType :: Type
+  , tcmLocal :: LocalScope
+  }
+
 instance Show (e a) => Show (ELoc e a) where
   showsPrec n = showsPrec n . elVal
 
@@ -31,17 +36,25 @@ type LExpr = ELoc Expr
 data Expr a
   = LitE Literal
   | AppE (LExpr a) (LExpr a)
-  | LamE [LBndr a] (LExpr a)
-  | VarE (LBndr a)
+  | LamE [Name] (LExpr a)
+  | VarE Name
   deriving stock (Eq, Ord, Show, Functor, Foldable, Traversable)
 
 data Literal = IntLit Int
   deriving stock (Eq, Ord, Show)
 
-type LBndr = ELoc Bndr
-data Bndr a = Bndr Name
-  deriving stock (Eq, Ord, Show, Functor, Foldable, Traversable)
-
 newtype Name = Name Text
   deriving stock (Eq, Ord, Show)
+
+
+data Type
+  = ConT Name
+  | VarT Name
+  | AppT Type Type
+  | Type :-> Type
+  deriving stock (Eq, Ord, Show)
+
+type LocalScope = Map Name Type
+
+infixr 0 :->
 
