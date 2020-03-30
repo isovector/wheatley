@@ -15,23 +15,25 @@ data ELoc e a = EL
   }
   deriving stock (Functor, Foldable, Traversable, Data)
 
+data Loc e a = L
+  { lSpan :: SrcSpan
+  , lVal :: e a
+  }
+  deriving stock (Eq, Ord, Show, Functor, Foldable, Traversable, Data)
+
 data TcMeta = TcMeta
   { tcmType :: Type
   , tcmLocal :: LocalScope
   }
   deriving stock (Eq, Ord, Show, Data)
 
--- instance Show (e a) => Show (ELoc e a) where
---   showsPrec n = showsPrec n . elVal
+instance Show (e a) => Show (ELoc e a) where
+  showsPrec n = showsPrec n . elVal
 
 
-deriving instance (Show (e a), Show a) => Show (ELoc e a)
+-- deriving instance (Show (e a), Show a) => Show (ELoc e a)
 deriving instance (Eq (e a), Eq a) => Eq (ELoc e a)
 deriving instance (Ord (e a), Ord a) => Ord (ELoc e a)
-
-
-data Loc e = L SrcSpan e
-  deriving stock (Eq, Ord, Show, Data)
 
 
 type LExpr = ELoc Expr
@@ -57,9 +59,24 @@ data Type
   | VarT Name
   | AppT Type Type
   | Type :-> Type
+  | ForallT [Name] Type
   deriving stock (Eq, Ord, Show, Data)
 
 type LocalScope = Map Name Type
+
+type LDec = Loc Dec
+data Dec a
+  = FunD Name [Pat] (LExpr a)
+  | SigD Name Type
+  deriving stock (Eq, Ord, Show, Functor, Foldable, Traversable, Data)
+
+data Pat
+  = VarP Name
+  | WildP
+  deriving stock (Eq, Ord, Show, Data)
+
+
+
 
 infixr 0 :->
 

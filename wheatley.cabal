@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 34c01476afe8c96af92aec921eff911254f19a0a592b6191a387492488c4f70b
+-- hash: 67a5e8588793537a63f1e41376cbc656fc0ea29e73488ab4223fa4f2de180013
 
 name:           wheatley
 version:        0.1.0.0
@@ -36,11 +36,12 @@ library
       Paths_wheatley
   hs-source-dirs:
       src
-  default-extensions: OverloadedStrings GADTs TypeFamilies TypeOperators DataKinds ScopedTypeVariables LambdaCase ViewPatterns FlexibleInstances FlexibleContexts UndecidableInstances KindSignatures DeriveFunctor DeriveGeneric DeriveDataTypeable DeriveFoldable DeriveTraversable DerivingStrategies DerivingVia GeneralizedNewtypeDeriving DeriveAnyClass StandaloneDeriving
+  default-extensions: OverloadedStrings GADTs TypeFamilies TypeOperators DataKinds ScopedTypeVariables LambdaCase ViewPatterns FlexibleInstances FlexibleContexts UndecidableInstances KindSignatures DeriveFunctor DeriveGeneric DeriveDataTypeable DeriveFoldable DeriveTraversable DerivingStrategies DerivingVia GeneralizedNewtypeDeriving DeriveAnyClass StandaloneDeriving TypeApplications MultiParamTypeClasses
   build-depends:
       base-noprelude >=4.7 && <5
     , base-prelude
     , containers
+    , ghc-prim
     , megaparsec
     , mtl
     , syb

@@ -43,6 +43,7 @@ default-extensions:
   - DeriveAnyClass
   - StandaloneDeriving
   - TypeApplications
+  - MultiParamTypeClasses
 
 dependencies:
 - base-noprelude >= 4.7 && < 5
@@ -53,6 +54,7 @@ dependencies:
 - syb
 - mtl
 - transformers
+- ghc-prim
 
 library:
   source-dirs: src

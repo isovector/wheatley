@@ -13,7 +13,7 @@ import Data.Generics.Aliases
 data TcState = TcState
   { tcsFresh :: Int
   , tcsSubst :: Map Name Type
-  , tcsScope :: [Map Name Type]
+  , tcsScope :: Map Name Type
   }
   deriving stock (Eq, Ord, Show)
 
@@ -23,16 +23,16 @@ newtype TcM a = TcM
   deriving newtype (Functor, Applicative, Monad, MonadState TcState)
 
 runTc :: TcM a -> a
-runTc = flip evalState (TcState 0 mempty [wiredIn_prelude]) . runTc'
+runTc = flip evalState (TcState 0 mempty wiredIn_prelude) . runTc'
 
 mkMeta :: Type -> TcM TcMeta
 mkMeta ty = do
-  scope <- fold <$> gets tcsScope
+  scope <- gets tcsScope
   pure $ TcMeta ty scope
 
 getTypeOf :: Name -> TcM Type
 getTypeOf n = do
-  scope <- fold <$> gets tcsScope
+  scope <- gets tcsScope
   pure $ fromMaybe (error "yo") $ M.lookup n scope
 
 
@@ -99,7 +99,7 @@ fresh = do
 
 withScope :: Map Name Type -> TcM a -> TcM a
 withScope scope (TcM m) =
-  TcM $ withState (\tcs -> tcs { tcsScope = scope : tcsScope tcs }) m
+  TcM $ withState (\tcs -> tcs { tcsScope = scope <> tcsScope tcs }) m
 
 type Subst = Map Name Type
 
@@ -116,6 +116,8 @@ mgu (ConT a) (ConT b)
   | a == b  = pure mempty
 mgu (VarT u) t  = varBind u t
 mgu t (VarT u)  = varBind u t
+mgu ForallT{} _ = error "forallT mgu'd"
+mgu _ ForallT{} = error "forallT mgu'd"
 mgu t1 t2       = error $
   mconcat
     [ "types don't unify: '"
@@ -152,11 +154,13 @@ instance Types Type where
   free (ConT _)   = S.fromList []
   free (AppT a b) = free a <> free b
   free (a :-> b)  = free a <> free b
+  free (ForallT cs t) = free t S.\\ S.fromList cs
 
   sub s (VarT n)   = maybe (VarT n) id $ M.lookup n s
   sub _ (ConT n)   = ConT n
   sub s (AppT a b) = sub s a `AppT` sub s b
   sub s (a :-> b)  = sub s a :-> sub s b
+  sub s (ForallT cs t) = ForallT cs $ sub (foldr M.delete s cs) t
 
 
 
