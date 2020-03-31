@@ -27,11 +27,11 @@ data TcMeta = TcMeta
   }
   deriving stock (Eq, Ord, Show, Data)
 
-instance Show (e a) => Show (ELoc e a) where
-  showsPrec n = showsPrec n . elVal
+-- instance Show (e a) => Show (ELoc e a) where
+--   showsPrec n = showsPrec n . elVal
 
 
--- deriving instance (Show (e a), Show a) => Show (ELoc e a)
+deriving instance (Show (e a), Show a) => Show (ELoc e a)
 deriving instance (Eq (e a), Eq a) => Eq (ELoc e a)
 deriving instance (Ord (e a), Ord a) => Ord (ELoc e a)
 

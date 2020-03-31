@@ -20,30 +20,30 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/isovector/wheatley#readme>
 
 default-extensions:
-  - OverloadedStrings
-  - GADTs
-  - TypeFamilies
-  - TypeOperators
   - DataKinds
-  - ScopedTypeVariables
-  - LambdaCase
-  - ViewPatterns
-  - FlexibleInstances
-  - FlexibleContexts
-  - UndecidableInstances
-  - KindSignatures
-  - DeriveFunctor
-  - DeriveGeneric
+  - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
   - DeriveTraversable
   - DerivingStrategies
   - DerivingVia
+  - FlexibleContexts
+  - FlexibleInstances
+  - GADTs
   - GeneralizedNewtypeDeriving
-  - DeriveAnyClass
+  - KindSignatures
+  - LambdaCase
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - ScopedTypeVariables
   - StandaloneDeriving
   - TypeApplications
-  - MultiParamTypeClasses
+  - TypeFamilies
+  - TypeOperators
+  - UndecidableInstances
+  - ViewPatterns
 
 dependencies:
 - base-noprelude >= 4.7 && < 5
@@ -55,6 +55,9 @@ dependencies:
 - mtl
 - transformers
 - ghc-prim
+- lens
+- pretty-show
+- pretty
 
 library:
   source-dirs: src

@@ -7,8 +7,6 @@ module Prelude
 
 import BasePrelude hiding
   ( (++)
-  , lines
-  , unlines
   , words
   , unwords
   , ShowS
