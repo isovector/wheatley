@@ -37,28 +37,28 @@ getTypeOf n = do
 
 
 typecheckM :: LExpr () -> TcM (LExpr TcMeta)
-typecheckM (EL ss _ (LitE (IntLit n))) = do
+typecheckM (EL ss dirty _ (LitE (IntLit n))) = do
   meta <- mkMeta wiredIn_int
-  pure $ EL ss meta $ LitE $ IntLit n
-typecheckM (EL ss _ (AppE f a)) = do
+  pure $ EL ss dirty meta $ LitE $ IntLit n
+typecheckM (EL ss dirty _ (AppE f a)) = do
   ty <- fresh
   meta <- mkMeta ty
   (ft, fv) <- typeOf <$> typecheckM f
   (at, av) <- typeOf <$> typecheckM a
   unify ft $ at :-> ty
-  pure $ EL ss meta $ AppE fv av
-typecheckM (EL ss _ (VarE n)) = do
+  pure $ EL ss dirty meta $ AppE fv av
+typecheckM (EL ss dirty _ (VarE n)) = do
   ty <- getTypeOf n
   meta <- mkMeta ty
-  pure $ EL ss meta (VarE n)
-typecheckM (EL ss _ (LamE bndrs expr)) = do
+  pure $ EL ss dirty meta (VarE n)
+typecheckM (EL ss dirty _ (LamE bndrs expr)) = do
   bndrts <- traverse (const fresh) bndrs
   (et, ev) <- withScope (M.fromList $ zip bndrs bndrts)
             $ typeOf <$> typecheckM expr
   tv <- fresh
   meta <- mkMeta tv
   unify tv $ foldr (:->) et bndrts
-  pure $ EL ss meta $ LamE bndrs ev
+  pure $ EL ss dirty meta $ LamE bndrs ev
 
 
 zonk :: Data a => a -> TcM a
@@ -71,7 +71,7 @@ zonk a = do
 
 
 typeOf :: LExpr TcMeta -> (Type, LExpr TcMeta)
-typeOf e@(EL _ tcm _) = (tcmType tcm, e)
+typeOf e = (tcmType $ elMeta e, e)
 
 unify :: Type -> Type -> TcM ()
 unify t1 t2 = do
@@ -161,9 +161,4 @@ instance Types Type where
   sub s (AppT a b) = sub s a `AppT` sub s b
   sub s (a :-> b)  = sub s a :-> sub s b
   sub s (ForallT cs t) = ForallT cs $ sub (foldr M.delete s cs) t
-
-
-
-test :: LExpr ()
-test = EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 23}), elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 22}), elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elMeta = (), elVal = LamE [LocalName "a",LocalName "b"] (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 17}), elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 15}), elMeta = (), elVal = VarE (LocalName "plus")}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 15}) (SrcPos {srcPosLine = 1, srcPosCol = 17}), elMeta = (), elVal = VarE (LocalName "a")})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 17}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elMeta = (), elVal = VarE (LocalName "b")})})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 20}) (SrcPos {srcPosLine = 1, srcPosCol = 22}), elMeta = (), elVal = LitE (IntLit 5)})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 22}) (SrcPos {srcPosLine = 1, srcPosCol = 23}), elMeta = (), elVal = LitE (IntLit 5)})}
 

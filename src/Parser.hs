@@ -15,7 +15,7 @@ parseExpr = do
   pure $ foldl1' mkLAppE exprs
   where
     mkLAppE :: LExpr () -> LExpr () -> LExpr ()
-    mkLAppE f a = EL (envelope (elSpan f) (elSpan a)) () $ AppE f a
+    mkLAppE f a = EL (envelope (elSpan f) (elSpan a)) False () $ AppE f a
 
     parseExprNoApp :: Parser (LExpr ())
     parseExprNoApp =
@@ -39,7 +39,7 @@ liftELoc parser = do
   start <- getSourcePos
   p <- parser
   end <- getSourcePos
-  pure $ EL (mkSrcSpan start end) () p
+  pure $ EL (mkSrcSpan start end) False () p
 
 mkSrcSpan :: SourcePos -> SourcePos -> SrcSpan
 mkSrcSpan (SourcePos fp line1 col1)
@@ -146,7 +146,7 @@ liftLoc parser = do
   start <- getSourcePos
   p <- parser
   end <- getSourcePos
-  pure $ L (mkSrcSpan start end) p
+  pure $ L (mkSrcSpan start end) False p
 
 parseDec :: Parser (LDec ())
 parseDec = nonIndented $ liftLoc $ asum
@@ -165,4 +165,5 @@ main = do
   fc <- T.readFile file
   putStrLn $ either errorBundlePretty show $ parse (some parseDec) file fc
 
-
+test :: LExpr ()
+test = EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 23}), elDirty = False, elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 22}), elDirty = False, elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 2}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elDirty = False, elMeta = (), elVal = LamE [LocalName "a",LocalName "b"] (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elDirty = False, elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 17}), elDirty = False, elMeta = (), elVal = AppE (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 10}) (SrcPos {srcPosLine = 1, srcPosCol = 15}), elDirty = False, elMeta = (), elVal = VarE (LocalName "plus")}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 15}) (SrcPos {srcPosLine = 1, srcPosCol = 17}), elDirty = False, elMeta = (), elVal = VarE (LocalName "a")})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 17}) (SrcPos {srcPosLine = 1, srcPosCol = 18}), elDirty = False, elMeta = (), elVal = VarE (LocalName "b")})})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 20}) (SrcPos {srcPosLine = 1, srcPosCol = 22}), elDirty = False, elMeta = (), elVal = LitE (IntLit 5)})}) (EL {elSpan = SrcSpan "yo" (SrcPos {srcPosLine = 1, srcPosCol = 22}) (SrcPos {srcPosLine = 1, srcPosCol = 23}), elDirty = False, elMeta = (), elVal = LitE (IntLit 5)})}

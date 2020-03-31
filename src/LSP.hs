@@ -43,7 +43,7 @@ replace
     -> a x
     -> a x
 replace src b = flip evalState (0, 0) . everywhereM (mkM $ \case
-  (EL sp@(SrcSpan fp start@(SrcPos sl sc) _) meta val :: ELoc e' x) -> do
+  (EL sp@(SrcSpan fp start@(SrcPos sl sc) _) dirty meta val :: ELoc e' x) -> do
     (l, c) <- get
     let f = bool move resize $ contains sp src
     case sp == src of
@@ -52,9 +52,9 @@ replace src b = flip evalState (0, 0) . everywhereM (mkM $ \case
             (spl, spc) = srcSize sp
         put (mesl - spl, mesc - spc)
         pure
-          $ EL (SrcSpan fp start (SrcPos (sl + mesl) (sc + mesc))) meta
+          $ EL (SrcSpan fp start (SrcPos (sl + mesl) (sc + mesc))) True meta
           $ b
-      False -> pure $ EL (f l c sp) meta val
+      False -> pure $ EL (f l c sp) dirty meta val
                                                             )
 
 measure :: Ppr e => e -> (Int, Int)

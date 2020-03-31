@@ -1,8 +1,8 @@
-{-# LANGUAGE ImplicitParams #-}
+{-# LANGUAGE ImplicitParams       #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module ParserUtils
   ( module ParserUtils
-  , module C
   , L.decimal
   ) where
 

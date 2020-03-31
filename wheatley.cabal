@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 78d7ea98d222dda14497dbaf3087e6e674a5327033ca6368b0a40069aa8b3218
+-- hash: 7aa9fbb8ed22eca2f657a3f98fdaec4e38cb70054d778e01a3d710fad185c3bd
 
 name:           wheatley
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       AST
       Lens
       LSP
+      LSP.Dirty
       Parser
       ParserUtils
       Ppr
@@ -40,6 +41,7 @@ library
   hs-source-dirs:
       src
   default-extensions: DataKinds DeriveAnyClass DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveTraversable DerivingStrategies DerivingVia FlexibleContexts FlexibleInstances GADTs GeneralizedNewtypeDeriving KindSignatures LambdaCase MultiParamTypeClasses OverloadedStrings ScopedTypeVariables StandaloneDeriving TypeApplications TypeFamilies TypeOperators UndecidableInstances ViewPatterns
+  ghc-options: -Wall
   build-depends:
       base-noprelude >=4.7 && <5
     , base-prelude
