@@ -3,6 +3,7 @@ module Prelude
   , Text
   , Map
   , pack
+  , unpack
   ) where
 
 import BasePrelude hiding

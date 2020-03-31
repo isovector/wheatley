@@ -2,6 +2,7 @@
 
 module LSP where
 
+import Ppr
 import AST
 import Data.Generics.Aliases
 import Data.Generics.Schemes
@@ -30,9 +31,13 @@ contains (SrcSpan afp (SrcPos al0 ac0) (SrcPos al1 ac1))
     , bc1 <= ac1
     ]
 
+srcSize :: SrcSpan -> (Int, Int)
+srcSize (SrcSpan _ (SrcPos l0 c0) (SrcPos l1 c1))
+  = (l1 - l0, c1 - c0)
+
 replace
     :: forall e' x a
-     . (Data (a x), Show (e' x), Typeable e', Typeable x)
+     . (Data (a x), Ppr (e' x), Typeable e', Typeable x)
     => SrcSpan
     -> e' x
     -> a x
@@ -43,16 +48,17 @@ replace src b = flip evalState (0, 0) . everywhereM (mkM $ \case
     let f = bool move resize $ contains sp src
     case sp == src of
       True  -> do
-        let mes@(mesl, mesc) = measure b
-        put mes
+        let (mesl, mesc) = measure b
+            (spl, spc) = srcSize sp
+        put (mesl - spl, mesc - spc)
         pure
           $ EL (SrcSpan fp start (SrcPos (sl + mesl) (sc + mesc))) meta
           $ b
       False -> pure $ EL (f l c sp) meta val
                                                             )
 
-measure :: Show e => e -> (Int, Int)
+measure :: Ppr e => e -> (Int, Int)
 measure e =
-  let ls = lines $ show e
-   in (length ls - 1, length $ last ls)
+  let ls = lines $ render $ ppr e
+   in (length ls - 1, length (last ls) + 1)
 
